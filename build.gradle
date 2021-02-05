@@ -1,0 +1,112 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: "kotlin-kapt"
+apply plugin: "com.alibaba.arouter"
+
+android {
+    compileSdkVersion compile_sdk_version
+    buildToolsVersion build_tools_version
+
+    defaultConfig {
+        minSdkVersion min_sdk_version
+        targetSdkVersion target_sdk_version
+
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles 'consumer-rules.pro'
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            debuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sourceSets {
+        main {
+            java.srcDirs += 'src/main/kotlin'
+        }
+    }
+
+    androidExtensions {
+        experimental = true
+    }
+
+    // lintOptions {
+    //     abortOnError false
+    // }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    /* Kotlin */
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    /* Androidx Compatibility */
+    api "androidx.appcompat:appcompat:$androidx_appcompat_version"
+    api "androidx.core:core-ktx:$androidx_core_ktx_version"
+    api "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
+    api "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
+    api "androidx.localbroadcastmanager:localbroadcastmanager:$androidx_localbroadcastmanager_version"
+
+    /* Material Design Support */
+    api "com.google.android.material:material:$material_design_version"
+
+    /* Flexbox */
+    api "com.google.android:flexbox:$flexbox_version"
+
+    /* ARouter */
+    api "com.alibaba:arouter-api:$arouter_api_version"
+    kapt "com.alibaba:arouter-compiler:$arouter_compile_version"
+
+    /* Joda Time */
+    api "joda-time:joda-time:$joda_time_version"
+
+    /* Glide */
+    api("com.github.bumptech.glide:glide:$glide_api_version") {
+        exclude group: "com.android.support"
+    }
+    kapt "com.github.bumptech.glide:compiler:$glide_compile_version"
+
+    /* Test */
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$androidx_test_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_test_espresso_core_version"
+
+    // configurations {
+    //     all {
+    //         resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+    //             def requested = details.requested
+    //             if (requested.group == 'androidx.appcompat') {
+    //                 if (!requested.name.startsWith("multidex")) {
+    //                     details.useVersion '1.2.+'
+    //                 }
+    //             }
+    //         }
+    //         exclude module: 'httpclient'
+    //     }
+    // }
+}
+
+kapt {
+    arguments {
+        arg("moduleName", project.getName())
+    }
+}
