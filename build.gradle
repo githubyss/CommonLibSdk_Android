@@ -87,6 +87,9 @@ dependencies {
     api "com.alibaba:arouter-api:$arouter_api_version"
     kapt "com.alibaba:arouter-compiler:$arouter_compile_version"
 
+    /* Eventbus */
+    api "org.greenrobot:eventbus:$eventbus_version"
+
     /* Joda Time */
     api "joda-time:joda-time:$joda_time_version"
 
