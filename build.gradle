@@ -49,16 +49,20 @@ android {
         exclude 'META-INF/metadata.jvm.kotlin_module'
     }
 
-    sourceSets {
-        // main.java.srcDirs += 'src/main/kotlin'
-        main {
-            java.srcDirs += 'src/main/kotlin'
-        }
-    }
+    // sourceSets {
+    //     // main.java.srcDirs += 'src/main/kotlin'
+    //     main {
+    //         java.srcDirs += 'src/main/kotlin'
+    //     }
+    // }
 
-    viewBinding {
-        enabled = isViewBindingEnabled.toBoolean()
-    }
+    // viewBinding {
+    //     enabled = isViewBindingEnabled.toBoolean()
+    // }
+
+    // dataBinding {
+    //     enabled = isDataBindingEnabled.toBoolean()
+    // }
 
     // androidExtensions {
     //     experimental = true
