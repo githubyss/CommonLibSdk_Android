@@ -85,6 +85,7 @@ dependencies {
     api "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
     api "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
     api "androidx.localbroadcastmanager:localbroadcastmanager:$androidx_localbroadcastmanager_version"
+    api "androidx.lifecycle:lifecycle-extensions:$androidx_lifecycle_version"
 
     /* Material Design Support */
     api "com.google.android.material:material:$material_design_version"
@@ -98,6 +99,10 @@ dependencies {
 
     /* Eventbus */
     api "org.greenrobot:eventbus:$eventbus_version"
+
+    /* RxAndroid */
+    // api "io.reactivex:rxandroid:$rxandroid_version"
+    api "io.reactivex.rxjava3:rxandroid:$rxandroid3_version"
 
     /* Joda Time */
     api "joda-time:joda-time:$joda_time_version"
