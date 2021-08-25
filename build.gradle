@@ -49,10 +49,63 @@ android {
         exclude 'META-INF/metadata.jvm.kotlin_module'
     }
 
+    // flavorDimensions 'lib', 'alone'
+    // productFlavors {
+    //     lib {
+    //         dimension 'lib'
+    //     }
+    //     alone {
+    //         dimension 'alone'
+    //     }
+    // }
+
     // sourceSets {
-    //     // main.java.srcDirs += 'src/main/kotlin'
+    //     main.java.srcDirs += 'src/main/kotlin'
+    //
     //     main {
     //         java.srcDirs += 'src/main/kotlin'
+    //         test.java.srcDirs += 'src/test/kotlin'
+    //         res.srcDirs += [
+    //                 'src/main/res/common',
+    //                 'src/main/res/value',
+    //         ]
+    //     }
+    //
+    //     main {
+    //         java {
+    //             srcDirs 'src/main/java'
+    //             srcDirs 'src/main/kotlin'
+    //         }
+    //         res {
+    //             srcDirs 'src/main/res/common'
+    //             srcDirs 'src/main/res/value'
+    //         }
+    //     }
+    //
+    //     alone {
+    //         if (isRunAlone.toBoolean()) {
+    //             java {
+    //                 srcDirs 'src/alone/java'
+    //                 srcDirs 'src/alone/kotlin'
+    //             }
+    //             res {
+    //                 srcDirs 'src/alone/res'
+    //             }
+    //             manifest {
+    //                 srcFile 'src/alone/AndroidManifest.xml'
+    //             }
+    //         }
+    //     }
+    //
+    //     test {
+    //         java {
+    //             srcDirs 'src/test/java'
+    //             srcDirs 'src/test/kotlin'
+    //         }
+    //     }
+    //
+    //     sourceSets.all {
+    //         set -> println "${set.name} 的文件是 ${set.java.srcDirs}"
     //     }
     // }
 
