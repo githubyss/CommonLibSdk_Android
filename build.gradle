@@ -1,4 +1,11 @@
-apply plugin: 'com.android.library'
+// 根据配置是否为 launchApp 决定业务组件 module 是作为 library 还是独立 application
+boolean isShellApp = project.getName() == shellApp
+boolean isLaunchApp = project.getName() == launchApp
+if (isLaunchApp) { // 壳 APP 始终以 application 模式运行，其他业务组件以依赖库模式根据配置拔插
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
 apply plugin: 'kotlin-android'
 // apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-parcelize'
@@ -9,17 +16,23 @@ android {
     compileSdkVersion compile_sdk_version.toInteger()
     buildToolsVersion build_tools_version
 
+    resourcePrefix 'comlib_'
+
     defaultConfig {
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
 
-        versionCode 1
-        versionName '1.0'
+        // 根据是否为 launchApp 决定添加 applicationId 和版本号。
+        if (isLaunchApp) {
+            versionCode 1
+            versionName "1.0"
+            testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        }
 
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         consumerProguardFiles 'consumer-rules.pro'
     }
 
+    // BuildType，构建类型，主要针对开发生命周期的不同阶段进行配置。
     buildTypes {
         debug {
             debuggable isDebuggable.toBoolean()
@@ -31,6 +44,88 @@ android {
             debuggable isDebuggable.toBoolean()
             minifyEnabled isMinifyEnabled.toBoolean()
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // // BuildFlavor，构建特征，主要是用以发布给用户不同的应用版本。需要注意的是，这里的版本并非是版本号，而是功能。
+    // if (isLaunchApp) {
+    //     // 多纬度定义
+    //     flavorDimensions 'isPaid', 'nation'
+    //     // 多渠道打包配置
+    //     productFlavors {
+    //         free {
+    //             dimension 'isPaid'
+    //             applicationId 'com.githubyss.mobile.common.lib.free'
+    //             resValue "string", 'appName', '免费版'
+    //         }
+    //         paid {
+    //             dimension 'isPaid'
+    //             applicationId 'com.githubyss.mobile.common.lib.paid'
+    //             resValue "string", 'appName', '收费版'
+    //         }
+    //         china {
+    //             dimension 'nation'
+    //         }
+    //         france {
+    //             dimension 'nation'
+    //         }
+    //     }
+    // }
+
+    sourceSets {
+        // main.java.srcDirs += 'src/main/kotlin'
+
+        // main {
+        //     java.srcDirs += 'src/main/kotlin'
+        //     test.java.srcDirs += 'src/test/kotlin'
+        //     res.srcDirs += [
+        //             'src/main/res/common',
+        //             'src/main/res/value',
+        //     ]
+        // }
+
+        main {
+            java {
+                srcDirs 'src/main/java'
+                srcDirs 'src/main/kotlin'
+            }
+            res {
+                srcDirs 'src/main/res'
+                srcDirs 'src/main/res/common'
+            }
+            manifest {
+                srcFile 'src/main/AndroidManifest.xml'
+            }
+            jniLibs {
+                srcDirs 'libs'
+            }
+        }
+
+        if (isLaunchApp) {
+            alone {
+                java {
+                    srcDirs 'src/alone/java'
+                    srcDirs 'src/alone/kotlin'
+                }
+                res {
+                    srcDirs 'src/alone/res'
+                    srcDirs 'src/alone/res/common'
+                }
+                manifest {
+                    srcFile 'src/alone/AndroidManifest.xml'
+                }
+            }
+        }
+
+        test {
+            java {
+                srcDirs 'src/test/java'
+                srcDirs 'src/test/kotlin'
+            }
+        }
+
+        sourceSets.all {
+            set -> println "${set.name} 的文件是 ${set.java.srcDirs}"
         }
     }
 
@@ -48,66 +143,6 @@ android {
         exclude 'META-INF/metadata.kotlin_module'
         exclude 'META-INF/metadata.jvm.kotlin_module'
     }
-
-    // flavorDimensions 'lib', 'alone'
-    // productFlavors {
-    //     lib {
-    //         dimension 'lib'
-    //     }
-    //     alone {
-    //         dimension 'alone'
-    //     }
-    // }
-
-    // sourceSets {
-    //     main.java.srcDirs += 'src/main/kotlin'
-    //
-    //     main {
-    //         java.srcDirs += 'src/main/kotlin'
-    //         test.java.srcDirs += 'src/test/kotlin'
-    //         res.srcDirs += [
-    //                 'src/main/res/common',
-    //                 'src/main/res/value',
-    //         ]
-    //     }
-    //
-    //     main {
-    //         java {
-    //             srcDirs 'src/main/java'
-    //             srcDirs 'src/main/kotlin'
-    //         }
-    //         res {
-    //             srcDirs 'src/main/res/common'
-    //             srcDirs 'src/main/res/value'
-    //         }
-    //     }
-    //
-    //     alone {
-    //         if (isRunAlone.toBoolean()) {
-    //             java {
-    //                 srcDirs 'src/alone/java'
-    //                 srcDirs 'src/alone/kotlin'
-    //             }
-    //             res {
-    //                 srcDirs 'src/alone/res'
-    //             }
-    //             manifest {
-    //                 srcFile 'src/alone/AndroidManifest.xml'
-    //             }
-    //         }
-    //     }
-    //
-    //     test {
-    //         java {
-    //             srcDirs 'src/test/java'
-    //             srcDirs 'src/test/kotlin'
-    //         }
-    //     }
-    //
-    //     sourceSets.all {
-    //         set -> println "${set.name} 的文件是 ${set.java.srcDirs}"
-    //     }
-    // }
 
     // viewBinding {
     //     enabled = isViewBindingEnabled.toBoolean()
@@ -168,6 +203,24 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_test_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_test_espresso_core_version"
+
+    // // 按需加载依赖
+    // // 整编时将全部组件添加依赖
+    // if (buildAll.toBoolean()) {
+    //     for (String name : allComponents.split(",")) {
+    //         if (!name.isEmpty()) {
+    //             implementation(project(":$name"))
+    //         }
+    //     }
+    // }
+    // // 非整编时可以选择组件加入容器 App
+    // else {
+    //     for (String name : loadComponents.split(",")) {
+    //         if (!name.isEmpty()) {
+    //             implementation(project(":$name"))
+    //         }
+    //     }
+    // }
 
     // configurations {
     //     all {
