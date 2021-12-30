@@ -1,1 +1,20 @@
-<manifest package="com.githubyss.mobile.common.lib" />
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.githubyss.mobile.common.lib"
+    >
+
+    <!-- 获取网络状态 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- 读通讯录 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- 写通讯录 -->
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <!-- 读外部存储 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- 写外部存储 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- 录音 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+</manifest>
