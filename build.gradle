@@ -33,7 +33,10 @@ android {
     // 资源前缀检查
     resourcePrefix 'comlib_'
 
-    // defaultConfig，构建类型，主要针对开发生命周期的不同阶段进行配置。
+    /**
+     * defaultConfig：默认构建类型，主要针对开发生命周期的不同阶段进行配置。
+     * defaultConfig 是 Android 中的一个默认的配置块，用来定义一些默认配置。它是一个 ProductFlavor，如果一个 productFlavors 没有为某些属性指定特定的配置的话，就会采用默认配置块中的默认配置。比如包名、版本号、版本名等。
+     */
     defaultConfig {
         /**
          * 最小支持的 SDK 版本（手机的 Android 系统版本）。
@@ -46,6 +49,7 @@ android {
         /**
          * 新特性支持的 SDK 版本。
          * targetSdkVersion 是 Android 提供向前兼容的主要依据。
+         * 随着 Android 系统的升级，某个系统的 API 或者模块的行为会发生改变，但是为了保证老APK的行为与之前一致兼容，只要 apk 中的 targetSdkVersion 不变，即使这个 APK 安装到新的系统上，其行为还是保持老的系统上的。
          * 在应用的 targetSdkVersion 没有更新之前，系统不会应用最新的行为变化。这允许你在适应新的行为变化之前就可以使用新的 API（因为你已经更新了 compileSdkVersion 不是吗？）
          * targetSdkVersion 指定的值表示你在该目标版本上已经做过了充分的测试，系统将会为你的应用程序启用一些最新的功能和特征。比如，Android 6.0 (API 23) 系统引用了运行时权限这个功能，如果你将 targetSdkVersion 指定为 23 或者更高，那么系统就会为你的程序启动运行时权限。如果你将 targetSdkVersion 指定为 22，那么就说明你的程序最高只在 Android 5.1 (API 22) 系统上做过充分的测试，Android 6.0 系统中引入的新功能就不会启动了。
          * 说通俗一点：
@@ -75,7 +79,7 @@ android {
         // resValue "integer", 'number', "4"
     }
 
-    // BuildType，构建类型，主要针对开发生命周期的不同阶段进行配置。
+    /** buildTypes：构建类型，主要针对开发生命周期的不同阶段进行配置。 */
     buildTypes {
         // 调试模式
         debug {
@@ -87,9 +91,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
             // 与构建类型相关的数据配置
-            // 可以通过 BuildConfig.IS_FIELD
-            buildConfigField 'boolean', 'IS_FIELD', 'true'
-            // 可以通过 Resources.getString(R.string.appToken) 获取
+            // Java 和 Kotlin 中，可以通过 BuildConfig.IS_RELEASE 获取
+            buildConfigField 'boolean', 'IS_RELEASE', "false"
+            // AndroidManifest 中，可以通过 "${CHANNEL_VALUE}"、"${APP_NAME}" 获取
+            manifestPlaceholders = [CHANNEL_VALUE: "debug", APP_NAME: "调试包"]
+            // Java 和 Kotlin 中，可以通过 Resources.getString(R.string.appToken) 获取
+            // xml 中，可以通过 R.string.appToken 获取
             resValue('string', 'appToken', "token123")
             resValue('string', 'appToken', "$token")
         }
@@ -100,53 +107,138 @@ android {
             minifyEnabled isMinifyEnabled.toBoolean()
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            buildConfigField 'boolean', 'IS_FIELD', 'true'
+            buildConfigField 'boolean', 'IS_RELEASE', "true"
+            manifestPlaceholders = [CHANNEL_VALUE: "release", APP_NAME: "发行包"]
             resValue('string', 'appToken', "token123")
             resValue('string', 'appToken', "$token")
         }
     }
 
-    // BuildFlavor，构建特征，主要是用以发布给用户不同的应用版本。需要注意的是，这里的版本并非是版本号，而是功能特性。
+    /**
+     * productFlavors：构建特征，主要是用以发布给用户不同的应用版本。需要注意的是，这里的版本并非是版本号，而是功能特性。
+     * 由于国内引用市场较多，因此需要为不同市场打包相应的包，通常这种包就叫做渠道包，我们可以使用 productFlavors 配合 manifestPlaceholders 属性的方法来替换渠道值。
+     * 一般用渠道的统计无非是用友盟或者其它之类的，以友盟为例：
+     */
     if (isLaunchApp) {
-        // 多维度定义
-        flavorDimensions 'isFree', 'nation'
-        // 多渠道打包配置
+        // flavorDimensions：多维度定义
+        flavorDimensions(
+                // 「产品」维度
+                'product',
+                // 「依赖包」维度
+                'lib',
+                // 「是否 VIP」维度
+                'isVip',
+                // 「是否免费」维度
+                'isFree',
+                // 「渠道」维度
+                'channel',
+                // 「国家」维度
+                'nation'
+        )
+        // productFlavors：多渠道打包配置
         productFlavors {
-            // 免费渠道
-            free {
+            // 产品1
+            productOne {
                 // 维度声明，用来表示此处配置属于某一维度
-                // 此处表示「是否免费」维度
-                dimension 'isFree'
+                dimension 'product'
                 // 应用包名
-                applicationId 'com.githubyss.mobile.common.lib.free'
-                // 免费文案标记
-                resValue 'string', 'freeTag', "免费版"
-                // 是否免费
-                resValue 'bool', 'isFree', "true"
-                // 是否显示有效期提示
-                resValue 'bool', 'isShowValidityHint', "false"
+                applicationId 'com.githubyss.mobile.common.lib'
+
+                buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+                manifestPlaceholders = [
+                        MANIFEST_DESC: "可以使用 manifestPlaceholders",
+                        // 应用名
+                        APP_NAME     : "应用名",
+                        // 服务名
+                        SERVICE_NAME : "服务名"
+                ]
+                resValue('string', 'resValueDesc', "可以使用 resValue")
             }
-            // 收费渠道
-            paid {
-                // 此处表示「是否免费」维度
+            // 依赖关系 A
+            aLib {
+                dimension 'lib'
+                // 应用包名后缀
+                applicationIdSuffix ".alib"
+            }
+            // 依赖关系 B
+            bLib {
+                dimension 'lib'
+                applicationIdSuffix ".blib"
+            }
+            // VIP
+            vip {
+                dimension 'isVip'
+                applicationIdSuffix ".vip"
+                resValue 'bool', 'isVip', "true"
+                manifestPlaceholders = [
+                        // 免费文案标记
+                        VIP_TAG: "VIP 版"
+                ]
+            }
+            // 试用
+            trial {
+                dimension 'isVip'
+                applicationIdSuffix ".trial"
+                resValue 'bool', 'isVip', "false"
+                manifestPlaceholders = [VIP_TAG: "试用版"]
+            }
+            // 免费
+            free {
                 dimension 'isFree'
-                applicationId 'com.githubyss.mobile.common.lib.paid'
+                applicationIdSuffix ".free"
+                resValue 'string', 'freeTag', "免费版"
+                resValue 'bool', 'isFree', "true"
+            }
+            // 收费
+            paid {
+                dimension 'isFree'
+                applicationIdSuffix ".paid"
                 resValue 'string', 'freeTag', "收费版"
                 resValue 'bool', 'isFree', "false"
-                resValue 'bool', 'isShowValidityHint', "true"
             }
+            // 豌豆荚
+            wandoujia {
+                dimension 'channel'
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]
+            }
+            // 百度
+            baidu {
+                dimension 'channel'
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "baidu"]
+            }
+            // 360
+            c360 {
+                dimension 'channel'
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "c360"]
+            }
+            // UC
+            uc {
+                dimension 'channel'
+                manifestPlaceholders = [UMENG_CHANNEL_VALUE: "uc"]
+            }
+            // 中国
             china {
-                // 此处表示「国家维度」
                 dimension 'nation'
             }
+            // 法国
             france {
-                // 此处表示「国家维度」
                 dimension 'nation'
             }
         }
+        
+        // productFlavors {
+        //     wandoujia {}
+        //     baidu {}
+        //     c360 {}
+        //     uc {}
+        //
+        //     productFlavors.all { flavor ->
+        //         flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
+        //     }
+        // }
     }
 
-    // 源文件路径设置
+    /** sourceSets：源文件路径设置 */
     sourceSets {
         // main.java.srcDirs += 'src/main/kotlin'
 
@@ -246,6 +338,10 @@ android {
 // 依赖包
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // 可以根据不同的渠道，导入不同版本的依赖包
+    // aLibApi "com.aaa.bbb:bbb:x.x.1"
+    // bLibApi "com.aaa.bbb:bbb:x.x.2"
 
     /* Kotlin */
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

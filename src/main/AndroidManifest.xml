@@ -1,6 +1,8 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.githubyss.mobile.common.lib"
+    tools:ignore="LockedOrientationActivity"
     >
 
     <!-- 获取网络状态 -->
@@ -17,4 +19,17 @@
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <!-- 录音 -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <application
+        android:allowBackup="false"
+        android:label="${APP_NAME}（${VIP_TAG}）"
+        android:supportsRtl="true"
+        tools:replace="android:label"
+        >
+
+        <!--<meta-data-->
+        <!--    android:name="CHANNEL"-->
+        <!--    android:value="${UMENG_CHANNEL_VALUE}"-->
+        <!--    />-->
+    </application>
 </manifest>
