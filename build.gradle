@@ -15,6 +15,12 @@ apply plugin: 'com.alibaba.arouter'
 //
 android {
     /**
+     * 构建工具的版本。
+     * 其中包括了打包工具 aapt、dx 等等。这个工具的目录位于..sdk_path/build-tools/XX.XX.XX。
+     */
+    buildToolsVersion build_tools_version
+
+    /**
      * SDK 编译版本。
      * 告诉 Gradle 用哪个 Android SDK 版本编译你的应用。使用任何新添加的 API 就需要使用对应 Level 的 Android SDK。
      * 修改 compileSdkVersion 不会改变运行时的行为。当你修改了 compileSdkVersion 的时候，可能会出现新的编译警告、编译错误，但新的 compileSdkVersion 不会被包含到 APK 中：它纯粹只是在编译的时候使用。
@@ -23,12 +29,6 @@ android {
      * 就是运行我们这个项目的需要的 SDK。比如如果我们需要在 Android 10.0 Q (API 29) 的版本运行，只要改为 29 就好了。
      */
     compileSdkVersion compile_sdk_version.toInteger()
-
-    /**
-     * 构建工具的版本。
-     * 其中包括了打包工具 aapt、dx 等等。这个工具的目录位于..sdk_path/build-tools/XX.XX.XX。
-     */
-    buildToolsVersion build_tools_version
 
     // 资源前缀检查
     resourcePrefix 'comlib_'
@@ -225,7 +225,7 @@ android {
                 dimension 'nation'
             }
         }
-        
+
         // productFlavors {
         //     wandoujia {}
         //     baidu {}
@@ -303,8 +303,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility java_version
+        targetCompatibility java_version
     }
 
     packagingOptions {
