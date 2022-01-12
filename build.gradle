@@ -79,6 +79,25 @@ android {
         // resValue "integer", 'number', "4"
     }
 
+    Properties properties = new Properties()
+    InputStream inputStream = project.rootProject.file("signing.properties").newDataInputStream()
+    properties.load(inputStream)
+    def RELEASE_STORE_FILE = file(properties.getProperty('RELEASE_STORE_FILE'))
+    def RELEASE_STORE_PASSWORD = properties.getProperty('RELEASE_STORE_PASSWORD')
+    def RELEASE_KEY_ALIAS = properties.getProperty('RELEASE_KEY_ALIAS')
+    def RELEASE_KEY_PWD = properties.getProperty('RELEASE_KEY_PWD')
+
+    /** signingConfigs：签名信息配置，必须放在 buildTypes 之前。 */
+    signingConfigs {
+        // 发布版本的签名配置
+        release {
+            storeFile RELEASE_STORE_FILE
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PWD
+        }
+    }
+
     /** buildTypes：构建类型，主要针对开发生命周期的不同阶段进行配置。 */
     buildTypes {
         // 调试版本
@@ -88,13 +107,13 @@ android {
             // 是否开启混淆
             minifyEnabled isMinifyEnabled.toBoolean()
             // 是否清理无用资源，依赖于 minifyEnabled
-            shrinkResources isMinifyEnabled.toBoolean()
+            shrinkResources isShrinkResources.toBoolean()
             // 是否启用 zipAlign 压缩
             zipAlignEnabled isZipAlignEnabled.toBoolean()
             // 混淆文件配置
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            // signingConfig signingConfigs.debug
+            signingConfig signingConfigs.debug
 
             // 与构建类型相关的数据配置
             // Java 和 Kotlin 中，可以通过 BuildConfig.IS_RELEASE 获取
@@ -109,13 +128,15 @@ android {
 
         // 发布版本
         release {
-            debuggable isDebuggable.toBoolean()
-            minifyEnabled isMinifyEnabled.toBoolean()
-            shrinkResources isMinifyEnabled.toBoolean()
-            zipAlignEnabled isZipAlignEnabled.toBoolean()
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            // signingConfig signingConfigs.release
+            if (RELEASE_STORE_FILE.exists()) {
+                signingConfig signingConfigs.release
+            }
 
             buildConfigField 'boolean', 'IS_RELEASE', "true"
             manifestPlaceholders = [CHANNEL_VALUE: "release", APP_NAME: "发行包"]
@@ -123,25 +144,6 @@ android {
             resValue('string', 'appToken', "$token")
         }
     }
-
-    /** signingConfigs：签名信息配置。 */
-    // signingConfigs {
-    //     // 调试版本的签名配置
-    //     debug {
-    //         storeFile file(props['DEBUG_KEYSTORE'])
-    //         keyAlias props['DEBUG_ALIAS']
-    //         storePassword props['DEBUG_KEYSTORE_PWD']
-    //         keyPassword props['DEBUG_KEY_PWD']
-    //     }
-    //
-    //     // 发布版本的签名配置
-    //     release {
-    //         storeFile file(props['KEYSTORE_FILE'])
-    //         keyAlias props['KEY_ALIAS']
-    //         storePassword props['KEYSTORE_PWD']
-    //         keyPassword props['KEY_PWD']
-    //     }
-    // }
 
     /**
      * productFlavors：构建特征，主要是用以发布给用户不同的应用版本。需要注意的是，这里的版本并非是版本号，而是功能特性。
