@@ -1,6 +1,24 @@
 // 根据配置是否为 launchApp 决定业务组件 module 是作为 library 还是独立 application
-boolean isShellApp = project.getName() == shellApp
-boolean isLaunchApp = project.getName() == launchApp
+// 工程目录中 gradle.properties 的配置参数，可以通过 project 或者 rootProject 获取
+def isShellApp = project.getName() == rootProject.shellApp
+def isLaunchApp = project.getName() == rootProject.launchApp
+
+println "project: ${project}"
+println "rootProject: ${rootProject}"
+println "project.rootProject: ${project.rootProject}"
+println "projectDir: ${projectDir}"
+println "rootDir: ${rootDir}"
+println "project.getName(): ${project.getName()}"
+println "rootProject.getName(): ${rootProject.getName()}"
+println "shellApp: ${shellApp}"
+println "project.shellApp: ${project.shellApp}"
+println "rootProject.shellApp: ${rootProject.shellApp}"
+println "launchApp: ${launchApp}"
+println "project.launchApp: ${project.launchApp}"
+println "rootProject.launchApp: ${rootProject.launchApp}"
+println "isShellApp: ${isShellApp}"
+println "isLaunchApp: ${isLaunchApp}"
+
 if (isLaunchApp) { // 壳 APP 始终以 application 模式运行，其他业务组件以依赖库模式根据配置拔插
     apply plugin: 'com.android.application'
 } else {
@@ -11,8 +29,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.alibaba.arouter'
-
-//
 android {
     /**
      * 构建工具的版本。
@@ -65,11 +81,7 @@ android {
          */
 
         // 根据是否为 launchApp 决定添加 applicationId 和版本号。
-        if (isLaunchApp) {
-            versionCode 1
-            versionName "1.0"
-            testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
-        }
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         consumerProguardFiles 'consumer-rules.pro'
@@ -81,12 +93,20 @@ android {
     }
 
     Properties properties = new Properties()
-    InputStream inputStream = project.rootProject.file("signing.properties").newDataInputStream()
+    File propertyFile = new File("${rootDir.getAbsolutePath()}/signing.properties")
+    // File propertyFile = rootProject.file("signing.properties")
+    InputStream inputStream = propertyFile.newDataInputStream()
     properties.load(inputStream)
-    def RELEASE_STORE_FILE = file(properties.getProperty('RELEASE_STORE_FILE'))
+    def RELEASE_STORE_FILE = file("${rootDir.getAbsolutePath()}/${properties.getProperty('RELEASE_STORE_FILE')}")
     def RELEASE_STORE_PASSWORD = properties.getProperty('RELEASE_STORE_PASSWORD')
     def RELEASE_KEY_ALIAS = properties.getProperty('RELEASE_KEY_ALIAS')
     def RELEASE_KEY_PWD = properties.getProperty('RELEASE_KEY_PWD')
+
+    println "properties: ${properties}"
+    println "RELEASE_STORE_FILE: ${RELEASE_STORE_FILE}"
+    println "RELEASE_STORE_PASSWORD: ${RELEASE_STORE_PASSWORD}"
+    println "RELEASE_KEY_ALIAS: ${RELEASE_KEY_ALIAS}"
+    println "RELEASE_KEY_PWD: ${RELEASE_KEY_PWD}"
 
     /** signingConfigs：签名信息配置，必须放在 buildTypes 之前。 */
     signingConfigs {
@@ -128,7 +148,7 @@ android {
             manifestPlaceholders = [CHANNEL_VALUE: "debug", APP_NAME: "调试包"]
             // Java 和 Kotlin 中，可以通过 Resources.getString(R.string.appToken) 获取
             // xml 中，可以通过 R.string.appToken 获取
-            resValue('string', 'appToken', "token123")
+            // resValue('string', 'appToken', "token123")
             resValue('string', 'appToken', "$token")
         }
 
@@ -148,7 +168,7 @@ android {
 
             buildConfigField 'boolean', 'IS_RELEASE', "true"
             manifestPlaceholders = [CHANNEL_VALUE: "release", APP_NAME: "发行包"]
-            resValue('string', 'appToken', "token123")
+            // resValue('string', 'appToken', "token123")
             resValue('string', 'appToken', "$token")
         }
     }
@@ -158,31 +178,48 @@ android {
      * 由于国内引用市场较多，因此需要为不同市场打包相应的包，通常这种包就叫做渠道包，我们可以使用 productFlavors 配合 manifestPlaceholders 属性的方法来替换渠道值。
      * 一般用渠道的统计无非是用友盟或者其它之类的，以友盟为例：
      */
+    /** flavorDimensions：多维度定义 */
     if (isLaunchApp) {
-        /** flavorDimensions：多维度定义 */
+        // flavorDimensions 'library', 'product', 'lib', 'vip', 'free', 'channel', 'nation'
         flavorDimensions(
+                // 「库」维度
+                'library',
                 // 「产品」维度
                 'product',
                 // 「依赖包」维度
                 'lib',
-                // 「是否 VIP」维度
-                'isVip',
-                // 「是否免费」维度
-                'isFree',
+                // 「VIP」维度
+                'vip',
+                // 「免费」维度
+                'free',
                 // 「渠道」维度
                 'channel',
                 // 「国家」维度
                 'nation'
         )
+
         /** productFlavors：多渠道打包配置，属于自定义的 BuildConfig */
         productFlavors {
+            lib {
+                dimension 'library'
+                versionCode 1
+                versionName "1.0"
+            }
+            app {
+                dimension 'library'
+                versionCode 1
+                versionName "1.0"
+            }
             // 产品1
             productOne {
                 // 维度声明，用来表示此处配置属于某一维度
                 dimension 'product'
                 // 应用包名
-                applicationId 'com.githubyss.mobile.common.lib'
-
+                if (isLaunchApp) {
+                    applicationId 'com.githubyss.mobile.common.lib'
+                }
+                versionCode 1
+                versionName "1.0"
                 buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
                 manifestPlaceholders = [
                         MANIFEST_DESC: "可以使用 manifestPlaceholders",
@@ -206,7 +243,7 @@ android {
             }
             // VIP
             vip {
-                dimension 'isVip'
+                dimension 'vip'
                 applicationIdSuffix ".vip"
                 resValue 'bool', 'isVip', "true"
                 manifestPlaceholders = [
@@ -216,21 +253,21 @@ android {
             }
             // 试用
             trial {
-                dimension 'isVip'
+                dimension 'vip'
                 applicationIdSuffix ".trial"
                 resValue 'bool', 'isVip', "false"
                 manifestPlaceholders = [VIP_TAG: "试用版"]
             }
             // 免费
             free {
-                dimension 'isFree'
+                dimension 'free'
                 applicationIdSuffix ".free"
                 resValue 'string', 'freeTag', "免费版"
                 resValue 'bool', 'isFree', "true"
             }
             // 收费
             paid {
-                dimension 'isFree'
+                dimension 'free'
                 applicationIdSuffix ".paid"
                 resValue 'string', 'freeTag', "收费版"
                 resValue 'bool', 'isFree', "false"
@@ -336,9 +373,9 @@ android {
             }
         }
 
-        sourceSets.all {
-            set -> println "${set.name} 的文件是 ${set.java.srcDirs}"
-        }
+        // sourceSets.all {
+        //     set -> println "${set.name} 的文件是 ${set.java.srcDirs}"
+        // }
     }
 
     compileOptions {
@@ -373,6 +410,8 @@ android {
     //     abortOnError false
     // }
 }
+
+//
 
 // 依赖包
 dependencies {
