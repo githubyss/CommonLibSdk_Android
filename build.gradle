@@ -71,6 +71,7 @@ android {
             testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         }
 
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         consumerProguardFiles 'consumer-rules.pro'
 
         // 默认的数据配置
@@ -91,14 +92,10 @@ android {
     signingConfigs {
         // 发布版本的签名配置
         release {
-            try {
-                storeFile RELEASE_STORE_FILE
-                storePassword RELEASE_STORE_PASSWORD
-                keyAlias RELEASE_KEY_ALIAS
-                keyPassword RELEASE_KEY_PWD
-            } catch (ex) {
-                throw new InvalidUserDataException("没有找到签名密钥文件")
-            }
+            storeFile RELEASE_STORE_FILE
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PWD
         }
     }
 
@@ -110,12 +107,17 @@ android {
             debuggable isDebuggable.toBoolean()
             // 是否开启混淆
             minifyEnabled isMinifyEnabled.toBoolean()
-            // 是否清理无用资源，依赖于 minifyEnabled
-            shrinkResources isShrinkResources.toBoolean()
+            if (isLaunchApp) {
+                // 是否清理无用资源，依赖于 minifyEnabled，必须应用于 com.android.application
+                shrinkResources isMinifyEnabled.toBoolean()
+            }
             // 是否启用 zipAlign 压缩
             zipAlignEnabled isZipAlignEnabled.toBoolean()
             // 混淆文件配置
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Android 本身已经提供了两份关于 proguard 的配置文件，放在 sdk/tools/proguard 目录下面。
+            // 一个是 proguard-android-optimize.txt，另一个是 proguard-android.txt。两者最主要的区别是前者加入了一些优化命令。
+            // proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             signingConfig signingConfigs.debug
 
@@ -134,9 +136,11 @@ android {
         release {
             debuggable false
             minifyEnabled true
-            shrinkResources true
+            if (isLaunchApp) {
+                shrinkResources true
+            }
             zipAlignEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             if (RELEASE_STORE_FILE.exists()) {
                 signingConfig signingConfigs.release
