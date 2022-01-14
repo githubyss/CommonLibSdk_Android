@@ -80,16 +80,27 @@ android {
          * 用较低的 minSdkVersion 来覆盖最大的人群，用最新的 SDK 设置 targetSdkVersion 和 compileVersion 来获得最好的外观和行为。
          */
 
-        // 根据是否为 launchApp 决定添加 applicationId 和版本号。
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         consumerProguardFiles 'consumer-rules.pro'
 
-        // 默认的数据配置
-        // resValue('string', 'appToken', "token123")
-        // resValue 'bool', 'isTrue', "false"
-        // resValue "integer", 'number', "4"
+        // Java 和 Kotlin 中，可以通过 BuildConfig.BUILD_CONFIG_DESC 获取
+        buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+
+        // AndroidManifest 中，可以通过 "${MANIFEST_DESC}" 获取
+        manifestPlaceholders = [MANIFEST_DESC: "可以使用 manifestPlaceholders"]
+
+        // Java 和 Kotlin 中，可以通过 Resources.getString(R.string.resValueDesc) 获取
+        // xml 中，可以通过 R.string.resValueDesc 获取
+        resValue('string', 'resValueDesc', "可以使用 resValue")
+        // 通过 Resources.getString(R.string.appToken) 获取
+        resValue('string', 'appToken', "token123")
+        resValue('string', 'appToken', "$token")
+        // 通过 Resources.getBoolean(R.bool.isTrue) 获取
+        resValue 'bool', 'isTrue', "false"
+        // 通过 Resources.getFloat(R.dimen.number) 获取
+        resValue "dimen", 'number', "4.0"
     }
 
     Properties properties = new Properties()
@@ -124,6 +135,7 @@ android {
         // 调试版本
         debug {
             // 是否可以调试
+            // Java 和 Kotlin 中，可以通过 BuildConfig.DEBUG 获取
             debuggable isDebuggable.toBoolean()
             // 是否开启混淆
             minifyEnabled isMinifyEnabled.toBoolean()
@@ -142,14 +154,9 @@ android {
             signingConfig signingConfigs.debug
 
             // 与构建类型相关的数据配置
-            // Java 和 Kotlin 中，可以通过 BuildConfig.IS_RELEASE 获取
-            buildConfigField 'boolean', 'IS_RELEASE', "false"
-            // AndroidManifest 中，可以通过 "${CHANNEL_VALUE}"、"${APP_NAME}" 获取
-            manifestPlaceholders = [CHANNEL_VALUE: "debug", APP_NAME: "调试包"]
-            // Java 和 Kotlin 中，可以通过 Resources.getString(R.string.appToken) 获取
-            // xml 中，可以通过 R.string.appToken 获取
-            // resValue('string', 'appToken', "token123")
-            resValue('string', 'appToken', "$token")
+            buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+            manifestPlaceholders = [MANIFEST_DESC: "可以使用 manifestPlaceholders"]
+            resValue('string', 'resValueDesc', "可以使用 resValue")
         }
 
         // 发布版本
@@ -166,10 +173,9 @@ android {
                 signingConfig signingConfigs.release
             }
 
-            buildConfigField 'boolean', 'IS_RELEASE', "true"
-            manifestPlaceholders = [CHANNEL_VALUE: "release", APP_NAME: "发行包"]
-            // resValue('string', 'appToken', "token123")
-            resValue('string', 'appToken', "$token")
+            buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+            manifestPlaceholders = [MANIFEST_DESC: "可以使用 manifestPlaceholders"]
+            resValue('string', 'resValueDesc', "可以使用 resValue")
         }
     }
 
@@ -214,19 +220,19 @@ android {
             productOne {
                 // 维度声明，用来表示此处配置属于某一维度
                 dimension 'product'
+                // 根据是否为 launchApp 决定添加 applicationId。
                 // 应用包名
                 if (isLaunchApp) {
                     applicationId 'com.githubyss.mobile.common.lib'
                 }
+                // 版本号可以一直配着，不需要根据 launchApp 决定
                 versionCode 1
                 versionName "1.0"
                 buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
                 manifestPlaceholders = [
                         MANIFEST_DESC: "可以使用 manifestPlaceholders",
                         // 应用名
-                        APP_NAME     : "应用名",
-                        // 服务名
-                        SERVICE_NAME : "服务名"
+                        APP_NAME     : "应用名"
                 ]
                 resValue('string', 'resValueDesc', "可以使用 resValue")
             }
@@ -234,17 +240,23 @@ android {
             aLib {
                 dimension 'lib'
                 // 应用包名后缀
-                applicationIdSuffix ".alib"
+                if (isLaunchApp) {
+                    applicationIdSuffix ".alib"
+                }
             }
             // 依赖关系 B
             bLib {
                 dimension 'lib'
-                applicationIdSuffix ".blib"
+                if (isLaunchApp) {
+                    applicationIdSuffix ".blib"
+                }
             }
             // VIP
             vip {
                 dimension 'vip'
-                applicationIdSuffix ".vip"
+                if (isLaunchApp) {
+                    applicationIdSuffix ".vip"
+                }
                 resValue 'bool', 'isVip', "true"
                 manifestPlaceholders = [
                         // 免费文案标记
@@ -254,21 +266,27 @@ android {
             // 试用
             trial {
                 dimension 'vip'
-                applicationIdSuffix ".trial"
+                if (isLaunchApp) {
+                    applicationIdSuffix ".trial"
+                }
                 resValue 'bool', 'isVip', "false"
                 manifestPlaceholders = [VIP_TAG: "试用版"]
             }
             // 免费
             free {
                 dimension 'free'
-                applicationIdSuffix ".free"
+                if (isLaunchApp) {
+                    applicationIdSuffix ".free"
+                }
                 resValue 'string', 'freeTag', "免费版"
                 resValue 'bool', 'isFree', "true"
             }
             // 收费
             paid {
                 dimension 'free'
-                applicationIdSuffix ".paid"
+                if (isLaunchApp) {
+                    applicationIdSuffix ".paid"
+                }
                 resValue 'string', 'freeTag', "收费版"
                 resValue 'bool', 'isFree', "false"
             }
@@ -347,20 +365,17 @@ android {
 
         if (isLaunchApp) {
             // 独立运行代码路径
-            alone {
+            app {
                 java {
-                    srcDirs 'src/alone/java'
-                    srcDirs 'src/alone/kotlin'
+                    srcDirs 'src/app/java'
+                    srcDirs 'src/app/kotlin'
                 }
                 res {
-                    srcDirs 'src/alone/res'
-                    srcDirs 'src/alone/res/common'
+                    srcDirs 'src/app/res'
+                    srcDirs 'src/app/res/common'
                 }
                 manifest {
-                    srcFile 'src/alone/AndroidManifest.xml'
-                }
-                jniLibs {
-                    srcDirs 'libs'
+                    srcFile 'src/app/AndroidManifest.xml'
                 }
             }
         }
