@@ -29,6 +29,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.alibaba.arouter'
+
 android {
     /**
      * 构建工具的版本。
@@ -86,7 +87,7 @@ android {
         consumerProguardFiles 'consumer-rules.pro'
 
         // Java 和 Kotlin 中，可以通过 BuildConfig.BUILD_CONFIG_DESC 获取
-        buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+        buildConfigField 'String', 'BUILD_CONFIG_DESC', '"可以使用 buildConfigField"'
 
         // AndroidManifest 中，可以通过 "${MANIFEST_DESC}" 获取
         manifestPlaceholders = [MANIFEST_DESC: "可以使用 manifestPlaceholders"]
@@ -154,7 +155,7 @@ android {
             signingConfig signingConfigs.debug
 
             // 与构建类型相关的数据配置
-            buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+            buildConfigField 'String', 'BUILD_CONFIG_DESC', '"可以使用 buildConfigField"'
             manifestPlaceholders = [MANIFEST_DESC: "可以使用 manifestPlaceholders"]
             resValue('string', 'resValueDesc', "可以使用 resValue")
         }
@@ -173,7 +174,7 @@ android {
                 signingConfig signingConfigs.release
             }
 
-            buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+            buildConfigField 'String', 'BUILD_CONFIG_DESC', '"可以使用 buildConfigField"'
             manifestPlaceholders = [MANIFEST_DESC: "可以使用 manifestPlaceholders"]
             resValue('string', 'resValueDesc', "可以使用 resValue")
         }
@@ -206,15 +207,13 @@ android {
 
         /** productFlavors：多渠道打包配置，属于自定义的 BuildConfig */
         productFlavors {
-            lib {
-                dimension 'library'
-                versionCode 1
-                versionName "1.0"
-            }
-            app {
-                dimension 'library'
-                versionCode 1
-                versionName "1.0"
+            if (isLaunchApp) {
+                app {
+                    applicationId 'com.githubyss.mobile.common.lib'
+                    dimension 'library'
+                    versionCode 1
+                    versionName "1.0"
+                }
             }
             // 产品1
             productOne {
@@ -228,7 +227,7 @@ android {
                 // 版本号可以一直配着，不需要根据 launchApp 决定
                 versionCode 1
                 versionName "1.0"
-                buildConfigField 'string', 'BUILD_CONFIG_DESC', "可以使用 buildConfigField"
+                buildConfigField 'String', 'BUILD_CONFIG_DESC', '"可以使用 buildConfigField"'
                 manifestPlaceholders = [
                         MANIFEST_DESC: "可以使用 manifestPlaceholders",
                         // 应用名
@@ -426,7 +425,11 @@ android {
     // }
 }
 
-//
+kapt {
+    arguments {
+        arg('moduleName', project.getName())
+    }
+}
 
 // 依赖包
 dependencies {
@@ -453,6 +456,10 @@ dependencies {
     /* Flexbox */
     api "com.google.android:flexbox:$flexbox_version"
 
+    /* Glide */
+    api "com.github.bumptech.glide:glide:$glide_api_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_compile_version"
+
     /* ARouter */
     api "com.alibaba:arouter-api:$arouter_api_version"
     kapt "com.alibaba:arouter-compiler:$arouter_compile_version"
@@ -467,9 +474,8 @@ dependencies {
     /* Joda Time */
     api "joda-time:joda-time:$joda_time_version"
 
-    /* Glide */
-    api "com.github.bumptech.glide:glide:$glide_api_version"
-    kapt "com.github.bumptech.glide:compiler:$glide_compile_version"
+    /* Wechat */
+    api "com.tencent.mm.opensdk:wechat-sdk-android:$wechat_version"
 
     /* Test */
     testImplementation "junit:junit:$junit_version"
@@ -507,10 +513,4 @@ dependencies {
     //         exclude module: 'httpclient'
     //     }
     // }
-}
-
-kapt {
-    arguments {
-        arg('moduleName', project.getName())
-    }
 }
