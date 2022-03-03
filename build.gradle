@@ -1,3 +1,12 @@
+// plugins {} 只能放在最前面
+plugins {
+    id 'kotlin-android'
+    // id 'kotlin-android-extensions'
+    // id 'kotlin-parcelize'
+    id 'kotlin-kapt'
+    id 'com.alibaba.arouter'
+}
+
 // 根据配置是否为 launchApp 决定业务组件 module 是作为 library 还是独立 application
 // 工程目录中 gradle.properties 的配置参数，可以通过 project 或者 rootProject 获取
 def isShellApp = project.getName() == rootProject.shellApp
@@ -24,11 +33,6 @@ if (isLaunchApp) { // 壳 APP 始终以 application 模式运行，其他业务�
 } else {
     apply plugin: 'com.android.library'
 }
-apply plugin: 'kotlin-android'
-// apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-parcelize'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'com.alibaba.arouter'
 
 android {
     /**
@@ -45,7 +49,7 @@ android {
      *
      * 就是运行我们这个项目的需要的 SDK。比如如果我们需要在 Android 10.0 Q (API 29) 的版本运行，只要改为 29 就好了。
      */
-    compileSdkVersion compile_sdk_version.toInteger()
+    compileSdk compile_sdk_version.toInteger()
 
     // 资源前缀检查
     resourcePrefix 'comlib_'
@@ -61,7 +65,7 @@ android {
          * minSdkVersion 是各大 Android 应用商店用来判断用户设备是否可以安装某个应用的标志之一。
          * 在开发时 minSdkVersion 也起到一个重要角色：lint 默认会在项目中运行，它在你使用了低于 minSdkVersion 的 API 时会警告你，帮你避免调用不存在的 API 的运行时问题。如果只在较高版本的系统上才使用某些 API，通常使用运行时检查系统版本的方式解决。
          */
-        minSdkVersion min_sdk_version
+        minSdk min_sdk_version.toInteger()
 
         /**
          * 新特性支持的 SDK 版本。
@@ -73,7 +77,12 @@ android {
          * 比如你将 targetSdkVersion 设置为 22，涉及某个（或某几个）权限，你直接在 mainfest 中配置权限即可，然后在 java 代码中进行获取权限后的逻辑处理即可。
          * 但如果你将 targetSdkVersion 设置为 23 或更高，你除了在 mainfest 中配置权限外，还需要在 java 代码中判断用户是否同意权限，如果同意，执行什么业务操作；如果不同意，执行什么业务操作（一般是提示某某权限被拒后，某某功能无法正常使用）。如果你只在 mainfest 中配置了权限，targetSdkVersion 又大于等于 23，Java 代码中不进行运行时权限的代码，你的应用程序就直接报错了。
          */
-        targetSdkVersion target_sdk_version
+        targetSdk target_sdk_version.toInteger()
+        // configurations.all {
+        //     resolutionStrategy {
+        //         force "androidx.compose.material:material:$androidx_compose_version"
+        //     }
+        // }
 
         /**
          * 理想上，在稳定状态下三者的关系应该更像这样：
@@ -179,6 +188,53 @@ android {
             resValue('string', 'resValueDesc', "可以使用 resValue")
         }
     }
+
+    compileOptions {
+        sourceCompatibility java_version
+        targetCompatibility java_version
+    }
+
+    kotlinOptions {
+        jvmTarget = java_version
+        useIR = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion androidx_compose_version
+        kotlinCompilerVersion kotlin_version
+    }
+
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/metadata.kotlin_module'
+        exclude 'META-INF/metadata.jvm.kotlin_module'
+    }
+
+    // viewBinding {
+    //     enabled = isViewBindingEnabled.toBoolean()
+    // }
+
+    // 是否启用 DataBinding
+    dataBinding {
+        enabled isDataBindingEnabled.toBoolean()
+    }
+
+    buildFeatures {
+        // Enables Jetpack Compose for this module
+        compose isComposeEnabled.toBoolean()
+    }
+
+    // androidExtensions {
+    //     experimental = true
+    // }
+
+    // lintOptions {
+    //     abortOnError false
+    // }
 
     /**
      * productFlavors：构建特征，主要是用以发布给用户不同的应用版本。需要注意的是，这里的版本并非是版本号，而是功能特性。
@@ -391,38 +447,6 @@ android {
         //     set -> println "${set.name} 的文件是 ${set.java.srcDirs}"
         // }
     }
-
-    compileOptions {
-        sourceCompatibility java_version
-        targetCompatibility java_version
-    }
-
-    packagingOptions {
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/metadata.kotlin_module'
-        exclude 'META-INF/metadata.jvm.kotlin_module'
-    }
-
-    // viewBinding {
-    //     enabled = isViewBindingEnabled.toBoolean()
-    // }
-
-    // 是否启用 DataBinding
-    dataBinding {
-        enabled = isDataBindingEnabled.toBoolean()
-    }
-
-    // androidExtensions {
-    //     experimental = true
-    // }
-
-    // lintOptions {
-    //     abortOnError false
-    // }
 }
 
 kapt {
@@ -448,17 +472,33 @@ dependencies {
     api "androidx.appcompat:appcompat:$androidx_appcompat_version"
     api "androidx.core:core-ktx:$androidx_core_ktx_version"
 
+    /* Androidx Sys */
+    api "androidx.localbroadcastmanager:localbroadcastmanager:$androidx_localbroadcastmanager_version"
+
     /* Androidx UI */
     api "androidx.recyclerview:recyclerview:$androidx_recyclerview_version"
     api "androidx.constraintlayout:constraintlayout:$androidx_constraintlayout_version"
 
-    /* Androidx Sys */
-    api "androidx.localbroadcastmanager:localbroadcastmanager:$androidx_localbroadcastmanager_version"
+    /* Androidx Compose */
+    // Ui
+    api "androidx.compose.ui:ui:$androidx_compose_version"
+    // Compose Material Design
+    api "androidx.compose.material:material:$androidx_compose_version"
+    // Animations
+    api "androidx.compose.animation:animation:$androidx_compose_version"
+    // Tooling support (Previews, etc.)
+    api "androidx.compose.ui:ui-tooling:$androidx_compose_version"
+    api "androidx.compose.ui:ui-tooling-preview:$androidx_compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$androidx_compose_version"
+    // Integration with activities
+    api "androidx.activity:activity-compose:$androidx_compose_activity_version"
+    // Integration with ViewModels
+    api "androidx.lifecycle:lifecycle-viewmodel-compose:$androidx_compose_lifecycle_version"
 
     /* Androidx Lifecycle */
-    api "androidx.lifecycle:lifecycle-extensions:$androidx_lifecycle_version"
     api "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle_version"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:$androidx_lifecycle_version"
+    api "androidx.lifecycle:lifecycle-extensions:$androidx_lifecycle_extensions_version"
     // api "android.arch.lifecycle:extensions:1.1.1"
 
     /* Material Design Support */
@@ -498,6 +538,9 @@ dependencies {
     api "com.github.bumptech.glide:glide:$glide_api_version"
     kapt "com.github.bumptech.glide:compiler:$glide_compile_version"
 
+    /* Coil */
+    api "io.coil-kt:coil:$coil_version"
+
     /* ARouter */
     api "com.alibaba:arouter-api:$arouter_api_version"
     kapt "com.alibaba:arouter-compiler:$arouter_compile_version"
@@ -506,6 +549,7 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "androidx.test.ext:junit:$androidx_test_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_test_espresso_core_version"
+    // androidTestImplementation "androidx.compose.ui:ui-test-junit4:$androidx_test_compose_version"
 
     // // 按需加载依赖
     // // 整编时将全部组件添加依赖
