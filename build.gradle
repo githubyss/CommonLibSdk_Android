@@ -49,7 +49,7 @@ android {
      *
      * 就是运行我们这个项目的需要的 SDK。比如如果我们需要在 Android 10.0 Q (API 29) 的版本运行，只要改为 29 就好了。
      */
-    compileSdk compile_sdk_version.toInteger()
+    compileSdkVersion compile_sdk_version.toInteger()
 
     // 资源前缀检查
     resourcePrefix 'comlib_'
@@ -65,7 +65,7 @@ android {
          * minSdkVersion 是各大 Android 应用商店用来判断用户设备是否可以安装某个应用的标志之一。
          * 在开发时 minSdkVersion 也起到一个重要角色：lint 默认会在项目中运行，它在你使用了低于 minSdkVersion 的 API 时会警告你，帮你避免调用不存在的 API 的运行时问题。如果只在较高版本的系统上才使用某些 API，通常使用运行时检查系统版本的方式解决。
          */
-        minSdk min_sdk_version.toInteger()
+        minSdkVersion min_sdk_version
 
         /**
          * 新特性支持的 SDK 版本。
@@ -77,7 +77,8 @@ android {
          * 比如你将 targetSdkVersion 设置为 22，涉及某个（或某几个）权限，你直接在 mainfest 中配置权限即可，然后在 java 代码中进行获取权限后的逻辑处理即可。
          * 但如果你将 targetSdkVersion 设置为 23 或更高，你除了在 mainfest 中配置权限外，还需要在 java 代码中判断用户是否同意权限，如果同意，执行什么业务操作；如果不同意，执行什么业务操作（一般是提示某某权限被拒后，某某功能无法正常使用）。如果你只在 mainfest 中配置了权限，targetSdkVersion 又大于等于 23，Java 代码中不进行运行时权限的代码，你的应用程序就直接报错了。
          */
-        targetSdk target_sdk_version.toInteger()
+        targetSdkVersion target_sdk_version
+
         // configurations.all {
         //     resolutionStrategy {
         //         force "androidx.compose.material:material:$androidx_compose_version"
@@ -89,6 +90,9 @@ android {
          * minSdkVersion (lowest possible) <= targetSdkVersion == compileSdkVersion (latest SDK)
          * 用较低的 minSdkVersion 来覆盖最大的人群，用最新的 SDK 设置 targetSdkVersion 和 compileVersion 来获得最好的外观和行为。
          */
+
+        versionCode 1
+        versionName "1.0"
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
@@ -473,7 +477,7 @@ dependencies {
 
     /* Androidx KTX */
     api "androidx.core:core-ktx:$androidx_core_ktx_version"
-    api "androidx.fragment:fragment-ktx:$androidx_core_ktx_version"
+    api "androidx.fragment:fragment-ktx:$androidx_fragment_ktx_version"
     api "androidx.collection:collection-ktx:$androidx_collection_ktx_version"
 
     /* Androidx Sys */
@@ -486,14 +490,15 @@ dependencies {
     /* Androidx Compose */
     // Ui
     api "androidx.compose.ui:ui:$androidx_compose_version"
+    api "androidx.compose.ui:ui-tooling:$androidx_compose_version"
+    api "androidx.compose.ui:ui-tooling-preview:$androidx_compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$androidx_compose_version"
     // Compose Material Design
     api "androidx.compose.material:material:$androidx_compose_version"
     // Animations
     api "androidx.compose.animation:animation:$androidx_compose_version"
-    // Tooling support (Previews, etc.)
-    api "androidx.compose.ui:ui-tooling:$androidx_compose_version"
-    api "androidx.compose.ui:ui-tooling-preview:$androidx_compose_version"
-    debugImplementation "androidx.compose.ui:ui-tooling:$androidx_compose_version"
+    // Foundation
+    api "androidx.compose.foundation:foundation:$androidx_compose_version"
     // Integration with activities
     api "androidx.activity:activity-compose:$androidx_compose_activity_version"
     // Integration with ViewModels
