@@ -79,12 +79,6 @@ android {
          */
         targetSdkVersion target_sdk_version
 
-        // configurations.all {
-        //     resolutionStrategy {
-        //         force "androidx.compose.material:material:$androidx_compose_version"
-        //     }
-        // }
-
         /**
          * 理想上，在稳定状态下三者的关系应该更像这样：
          * minSdkVersion (lowest possible) <= targetSdkVersion == compileSdkVersion (latest SDK)
@@ -291,7 +285,7 @@ android {
                 manifestPlaceholders = [
                         MANIFEST_DESC: "可以使用 manifestPlaceholders",
                         // 应用名
-                        APP_NAME     : "应用名"
+                        APP_NAME: "应用名"
                 ]
                 resValue('string', 'resValueDesc', "可以使用 resValue")
             }
@@ -469,6 +463,7 @@ dependencies {
 
     /* Kotlin */
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    api "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinx_coroutines_version"
 
@@ -491,6 +486,7 @@ dependencies {
     // Ui
     api "androidx.compose.ui:ui:$androidx_compose_version"
     api "androidx.compose.ui:ui-tooling:$androidx_compose_version"
+    api "androidx.compose.ui:ui-tooling-data:$androidx_compose_version"
     api "androidx.compose.ui:ui-tooling-preview:$androidx_compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$androidx_compose_version"
     // Compose Material Design
@@ -592,4 +588,15 @@ dependencies {
     //         exclude module: 'httpclient'
     //     }
     // }
+}
+
+configurations {
+    all {
+        resolutionStrategy {
+            // force "androidx.compose.material:material:$androidx_compose_version"
+            // force "androidx.compose.ui:ui-tooling:1.0.0-beta09"
+            // force "androidx.compose.ui:ui-tooling-data:1.0.0-beta09"
+            // force "androidx.compose.ui:ui-tooling-preview:1.0.0-beta09"
+        }
+    }
 }
