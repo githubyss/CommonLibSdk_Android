@@ -111,22 +111,6 @@ android {
         }
     }
 
-    // 是否启用 ViewBinding
-    // viewBinding {
-    //     enabled = feature.isViewBindingEnabled
-    // }
-
-    // 是否启用 DataBinding
-    dataBinding {
-        enabled feature.isDataBindingEnabled
-    }
-
-    buildFeatures {
-        // 是否启用 Compose
-        // Enables Jetpack Compose for this module
-        compose feature.isComposeEnabled
-    }
-
     /**
      * productFlavors：构建特征，主要是用以发布给用户不同的应用版本。需要注意的是，这里的版本并非是版本号，而是功能特性。
      * 由于国内引用市场较多，因此需要为不同市场打包相应的包，通常这种包就叫做渠道包，我们可以使用 productFlavors 配合 manifestPlaceholders 属性的方法来替换渠道值。
@@ -338,6 +322,22 @@ android {
             // set -> println "集合 ${set.name} 的文件是 ${set.java.srcDirs}"
         }
     }
+
+    // 是否启用 ViewBinding
+    // viewBinding {
+    //     enabled = feature.isViewBindingEnabled
+    // }
+
+    // 是否启用 DataBinding
+    // dataBinding {
+    //     enabled feature.isDataBindingEnabled
+    // }
+
+    // buildFeatures {
+    //     // 是否启用 Compose
+    //     // Enables Jetpack Compose for this module
+    //     compose feature.isComposeEnabled
+    // }
 }
 
 // 依赖包
@@ -348,98 +348,98 @@ dependencies {
     // aLibApi "com.aaa.bbb:bbb:x.x.1"
     // bLibApi "com.aaa.bbb:bbb:x.x.2"
 
-    /** Kotlin */
-    api dependenciesLib.kotlin_stdlib_jdk7
-    api dependenciesLib.kotlin_reflect
-    api dependenciesLib.kotlinx_coroutines_core
-    api dependenciesLib.kotlinx_coroutines_android
+    // /** Kotlin */
+    // api dependenciesLib.kotlin_stdlib_jdk7
+    // api dependenciesLib.kotlin_reflect
+    // api dependenciesLib.kotlinx_coroutines_core
+    // api dependenciesLib.kotlinx_coroutines_android
 
-    /** Androidx Compatibility */
-    api dependenciesLib.androidx_appcompat
+    // /** Androidx Compatibility */
+    // api dependenciesLib.androidx_appcompat
 
-    /** Androidx KTX */
-    api dependenciesLib.androidx_core_ktx
-    api dependenciesLib.androidx_fragment_ktx
-    api dependenciesLib.androidx_collection_ktx
-
-    /** Androidx Sys */
-    api dependenciesLib.androidx_localbroadcastmanager
-
-    /** Androidx UI */
-    api dependenciesLib.androidx_constraintlayout
-
-    /** Androidx Compose Ui */
-    api dependenciesLib.androidx_compose_ui
-    api dependenciesLib.androidx_compose_ui_tooling
-    api dependenciesLib.androidx_compose_ui_tooling_data
-    api dependenciesLib.androidx_compose_ui_tooling_preview
-    debugImplementation dependenciesLib.androidx_compose_ui_tooling
-
-    api dependenciesLib.androidx_compose_material
-    api dependenciesLib.androidx_compose_animation
-    api dependenciesLib.androidx_compose_foundation
-
-    /** Androidx Compose Integration with activities */
-    api dependenciesLib.androidx_compose_activity
-
-    /** Androidx Compose Integration with ViewModels */
-    api dependenciesLib.androidx_compose_lifecycle_viewmodel
-
-    /** Androidx Lifecycle */
-    api dependenciesLib.androidx_lifecycle_runtime_ktx
-    api dependenciesLib.androidx_lifecycle_viewmodel_ktx
-    api dependenciesLib.androidx_lifecycle_livedata_ktx
-    api dependenciesLib.androidx_lifecycle_extensions
-    // api dependenciesLib.android_arch_lifecycle_extensions
-
-    /** Material Design Support */
-    api dependenciesLib.google_material
-
-    /** Flexbox */
-    api dependenciesLib.google_flexbox
-
-    /** Gson */
-    api dependenciesLib.google_gson
-
-    /** Eventbus */
-    api dependenciesLib.greenrobot_eventbus
-
-    /** RxAndroid */
-    // api dependenciesLib.reactivex_rxandroid
-    api dependenciesLib.reactivex_rxjava3_rxandroid
-
-    /** Joda Time */
-    api dependenciesLib.joda_time
-
-    /** Wechat */
-    api dependenciesLib.tencent_wechat_sdk_android
-
-    /** Http */
-    api dependenciesLib.apache_httpcore
-    api dependenciesLib.apache_httpmime
-
-    /** Volley */
-    api dependenciesLib.mcxiaoke_volley
-
-    /** Retrofit2 */
-    api dependenciesLib.squareup_retrofit2
-    api dependenciesLib.squareup_retrofit2_converter_moshi
-
-    /** Glide */
-    api dependenciesLib.bumptech_glide
-    kapt dependenciesLib.bumptech_glide_compiler
-
-    /** Coil */
-    api dependenciesLib.coil
-
-    /** ARouter */
-    api dependenciesLib.alibaba_arouter_api
-    kapt dependenciesLib.alibaba_arouter_compiler
-
-    /** Test */
-    testImplementation dependenciesLib.junit
-    androidTestImplementation dependenciesLib.androidx_test_junit
-    androidTestImplementation dependenciesLib.androidx_test_espresso_core
+    // /** Androidx KTX */
+    // api dependenciesLib.androidx_core_ktx
+    // api dependenciesLib.androidx_fragment_ktx
+    // api dependenciesLib.androidx_collection_ktx
+    //
+    // /** Androidx Sys */
+    // api dependenciesLib.androidx_localbroadcastmanager
+    //
+    // /** Androidx UI */
+    // api dependenciesLib.androidx_constraintlayout
+    //
+    // /** Androidx Compose Ui */
+    // api dependenciesLib.androidx_compose_ui
+    // api dependenciesLib.androidx_compose_ui_tooling
+    // api dependenciesLib.androidx_compose_ui_tooling_data
+    // api dependenciesLib.androidx_compose_ui_tooling_preview
+    // debugImplementation dependenciesLib.androidx_compose_ui_tooling
+    //
+    // api dependenciesLib.androidx_compose_material
+    // api dependenciesLib.androidx_compose_animation
+    // api dependenciesLib.androidx_compose_foundation
+    //
+    // /** Androidx Compose Integration with activities */
+    // api dependenciesLib.androidx_compose_activity
+    //
+    // /** Androidx Compose Integration with ViewModels */
+    // api dependenciesLib.androidx_compose_lifecycle_viewmodel
+    //
+    // /** Androidx Lifecycle */
+    // api dependenciesLib.androidx_lifecycle_runtime_ktx
+    // api dependenciesLib.androidx_lifecycle_viewmodel_ktx
+    // api dependenciesLib.androidx_lifecycle_livedata_ktx
+    // api dependenciesLib.androidx_lifecycle_extensions
+    // // api dependenciesLib.android_arch_lifecycle_extensions
+    //
+    // /** Material Design Support */
+    // api dependenciesLib.google_material
+    //
+    // /** Flexbox */
+    // api dependenciesLib.google_flexbox
+    //
+    // /** Gson */
+    // api dependenciesLib.google_gson
+    //
+    // /** Eventbus */
+    // api dependenciesLib.greenrobot_eventbus
+    //
+    // /** RxAndroid */
+    // // api dependenciesLib.reactivex_rxandroid
+    // api dependenciesLib.reactivex_rxjava3_rxandroid
+    //
+    // /** Joda Time */
+    // api dependenciesLib.joda_time
+    //
+    // /** Wechat */
+    // api dependenciesLib.tencent_wechat_sdk_android
+    //
+    // /** Http */
+    // api dependenciesLib.apache_httpcore
+    // api dependenciesLib.apache_httpmime
+    //
+    // /** Volley */
+    // api dependenciesLib.mcxiaoke_volley
+    //
+    // /** Retrofit2 */
+    // api dependenciesLib.squareup_retrofit2
+    // api dependenciesLib.squareup_retrofit2_converter_moshi
+    //
+    // /** Glide */
+    // api dependenciesLib.bumptech_glide
+    // kapt dependenciesLib.bumptech_glide_compiler
+    //
+    // /** Coil */
+    // api dependenciesLib.coil
+    //
+    // /** ARouter */
+    // api dependenciesLib.alibaba_arouter_api
+    // kapt dependenciesLib.alibaba_arouter_compiler
+    //
+    // /** Test */
+    // testImplementation dependenciesLib.junit
+    // androidTestImplementation dependenciesLib.androidx_test_junit
+    // androidTestImplementation dependenciesLib.androidx_test_espresso_core
     // androidTestImplementation androidx_compose_ui_test_junit4
 
     // // 按需加载依赖
