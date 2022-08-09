@@ -340,7 +340,11 @@ android {
     // }
 }
 
-// 依赖包
+/**
+ * 依赖包
+ * - api 与 compile 相同，无法隐藏自己使用的依赖
+ * - implementation 可以让 module 在编译时隐藏自己使用的依赖
+ */
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
