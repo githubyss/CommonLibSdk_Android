@@ -1,13 +1,13 @@
 class AceTemp {
 
-    /** ****************************** Companion ****************************** */
+    /** ****************************** Object ****************************** */
 
     /**  */
     companion object {
-        var instance = null
-
         val TAG: String = AceTemp::class.java.simpleName
         private val TAG_ = AceTemp::class.simpleName
+
+        var INSTANCE = null
     }
 
 
