@@ -4,8 +4,11 @@ class AceTemp {
 
     /**  */
     companion object {
+        /** 以下两种得到的名字是一样的 */
         val TAG: String = AceTemp::class.java.simpleName
-        private val TAG_ = AceTemp::class.simpleName
+        val TAG_: String = AceTemp.javaClass.simpleName
+
+        private val TAG_NULLABLE = AceTemp::class.simpleName
 
         var INSTANCE = null
     }
