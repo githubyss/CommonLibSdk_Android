@@ -140,7 +140,7 @@ android {
         productFlavors {
             if (isLaunchApp) {
                 app {
-                    applicationId 'com.githubyss.mobile.common.lib'
+                    applicationId 'com.githubyss.common.lib'
                     dimension 'library'
                     versionCode 1
                     versionName "1.0"
@@ -153,7 +153,7 @@ android {
                 // 根据是否为 launchApp 决定添加 applicationId。
                 // 应用包名
                 if (isLaunchApp) {
-                    applicationId 'com.githubyss.mobile.common.lib'
+                    applicationId 'com.githubyss.common.lib'
                 }
                 // 版本号可以一直配着，不需要根据 launchApp 决定
                 versionCode 1
