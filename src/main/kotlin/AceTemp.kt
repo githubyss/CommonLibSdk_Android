@@ -1,3 +1,5 @@
+import android.app.FragmentManager
+
 class AceTemp {
 
     /** ****************************** Object ****************************** */
@@ -5,8 +7,9 @@ class AceTemp {
     /**  */
     companion object {
         /** 以下两种得到的名字是一样的 */
-        val TAG: String = AceTemp::class.java.simpleName
-        val TAG_: String = AceTemp.javaClass.simpleName
+        val TAG by lazy { AceTemp::class.simpleName }
+        val TAG_: String = AceTemp::class.java.simpleName
+        val TAG__: String = AceTemp.javaClass.simpleName
 
         private val TAG_NULLABLE = AceTemp::class.simpleName
 
@@ -36,6 +39,7 @@ class AceTemp {
     /** ******************** Converter ******************** */
     /** ******************** Processor ******************** */
     /** ******************** Operator ******************** */
+    /** ******************** Formatter ******************** */
 
     /** ****************************** Class ****************************** */
     /** ****************************** Implementations ****************************** */
