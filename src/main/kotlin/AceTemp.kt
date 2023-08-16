@@ -1,4 +1,4 @@
-import android.app.FragmentManager
+import android.app.Fragment
 
 class AceTemp {
 
@@ -6,21 +6,31 @@ class AceTemp {
 
     /**  */
     companion object {
-        /** 以下两种得到的名字是一样的 */
-        val TAG by lazy { AceTemp::class.simpleName }
-        val TAG_: String = AceTemp::class.java.simpleName
-        val TAG__: String = AceTemp.javaClass.simpleName
+        /** 使用 类名::class.java.simpleName 得到的类名，是指定类的类名 */
+        /** ::class.java.simpleName 得到的名字是不空的 */
+        private val TAG_JAVA_NOTNULL: String = AceTemp::class.java.simpleName
+        private val TAG_LAZY_NOTNULL: String by lazy { AceTemp::class.java.simpleName }
+        private val TAG_JAVA_NOTNULL_ = AceTemp::class.java.simpleName
+        private val TAG_LAZY_NOTNULL_ by lazy { AceTemp::class.java.simpleName }
 
-        private val TAG_NULLABLE = AceTemp::class.simpleName
+        /** ::class.simpleName 得到的名字是可空的 */
+        private val TAG_JAVA_NULLABLE: String? = AceTemp::class.simpleName
+        private val TAG_LAZY_NULLABLE: String? by lazy { AceTemp::class.simpleName }
+        private val TAG_JAVA_NULLABLE_ = AceTemp::class.simpleName
+        private val TAG_LAZY_NULLABLE_ by lazy { AceTemp::class.simpleName }
 
-        var INSTANCE = null
+        /** 使用这个创建 TAG，将 Class 替换成所属类的类名 */
+        private val TAG by lazy { Class::class.java.simpleName }
+        val TAG_ by lazy { Fragment::class.java.simpleName ?: "Fragment" }
+        private var INSTANCE: Nothing? = null
     }
 
 
     /** ****************************** Properties ****************************** */
 
-    /**  */
-    private var xxxName = this::class.java.simpleName
+    /** 使用 this::class.java.simpleName 得到的类名，是指定类的子类的类名 */
+    // private var TAG_JAVA_NOTNULL = this::class.java.simpleName
+    // private val TAG_LAZY_NOTNULL by lazy { this::class.java.simpleName }
 
 
     /** ****************************** Constructors ****************************** */
